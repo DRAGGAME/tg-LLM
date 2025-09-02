@@ -8,6 +8,7 @@ dependencies:
   - python=3.10
   - pip>=21.0.1
   - setuptools>=51.0.0
+  - aiosqlite
   - pip:
       - aiogram >= 3.5.0
       - python-dotenv
