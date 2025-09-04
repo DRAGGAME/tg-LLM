@@ -32,7 +32,7 @@ class InlineChoiceFabric(MainFabric):
         await self.create_builder_inline()
         print(last_mode)
         choice_mode_button = InlineKeyboardButton(
-            text=f"Краткое описание{'✅' if last_mode == 'short_description' else '❌'}",
+            text=f"Краткое описание{'✅' if last_mode[0][0] == 'short_description' else '❌'}",
             callback_data=InlineChoiceMode(
                 mode="short_description",
             ).pack()

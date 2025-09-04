@@ -24,6 +24,7 @@ class DefaultDB:
             async with self.pool.cursor() as cursor:
                 if params:
                     await cursor.execute(query, params)
+                    await self.pool.commit()
                 else:
                     await cursor.execute(query)
                 rows = await cursor.fetchall()
