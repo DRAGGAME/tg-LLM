@@ -1,8 +1,13 @@
 from g4f import Client
+from spire.doc import *
+from spire.doc.common import *
 
-
-async def request_short_description(text: str) -> str:
+async def request_short_description(file_name: str) -> str:
     client = Client()
+    docx = Document()
+    docx.LoadFromFile(f"./{file_name}")
+    text = docx.GetText()
+    print(text)
     response = client.chat.completions.create(
         model="gpt-4",
 
@@ -20,4 +25,5 @@ async def request_short_description(text: str) -> str:
                   {"role": f"Привет, опиши мне этот документ {text}"}],
         timeout=15
     )
+
     return response.choices[0].message.content

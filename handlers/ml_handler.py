@@ -19,11 +19,8 @@ async def docx_handler(message: Message):
         file_id = message.document.file_id
         file = await bot.get_file(file_id)
         file_path = file.file_path
-        await bot.download_file(file_path, f"text{message.chat.id}.txt")
+        print(file_path)
+        await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
 
-        with open(f"text{message.chat.id}.txt", "r") as file:
-            text = ""
-            for line in file:
-                text += line
-                response = await request_short_description(text)
+        response = await request_short_description(f"{file_path.split('/')[-1]}")
         await message.answer(response)
