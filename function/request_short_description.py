@@ -4,7 +4,8 @@ from g4f import Client
 async def request_short_description(text: str) -> str:
     client = Client()
     response = client.chat.completions.create(
-        model="gpt-5",
+        model="gpt-4",
+
         messages=[{"role": "system", "content": "Ты - высоко квалифицированный специалист по анализу текста. Твоя главная задача - это укоротить текст документа."
                                                 " Ты предоставляешь данные ученику. По тексту - пойми, какого класса этот ученик"
                                                 "Входные данные: текст документа"
@@ -16,7 +17,7 @@ async def request_short_description(text: str) -> str:
                                                 "4. Собери из подтем - краткое описание момента"
                                                 "5. Собери из кратких описаний - краткое описание всего текста."},
 
-                  {"role": f"Привет, опиши мне этот документ {text}"}]
+                  {"role": f"Привет, опиши мне этот документ {text}"}],
+        timeout=15
     )
-
     return response.choices[0].message.content
