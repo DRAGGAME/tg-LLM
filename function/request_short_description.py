@@ -43,6 +43,22 @@ async def request_short_description(file_name: str) -> str:
         except g4f.errors.ResponseError as e:
             print(f"Ошибка{e}")
             await asyncio.sleep(60)
+            response_generator = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "system", "content": "Ты - высоко квалифицированный специалист по анализу текста. Твоя главная задача - это укоротить текст документа."
+                                                    " Ты предоставляешь данные ученику. По тексту - пойми, какого класса этот ученик"
+                                                    "Входные данные: текст документа"
+                                                    "выходные данные: краткое описание документа к подготовке к вопросам"
+                                                    "Делай шаг за шагом:"
+                                                    "1. Проанализируй текст и выдели ключевые моменты"
+                                                    "2. По каждому ключевому моменту - анализируй подтемы этого момента"
+                                                    "3. По каждой подтеме - укороти текст до состояния, чтобы можно было быстро выучить"
+                                                    "4. Собери из подтем - краткое описание момента"
+                                                    "5. Собери из кратких описаний - краткое описание всего текста."},
+                    {"role": "user", "content": chunk}
+                ],
+                provider=g4f.Provider.ApiAirforce,
+            )
     for chunk in response_generator:
         result += str(chunk)
     match = re.search(r"content='(.*?)'", result)
