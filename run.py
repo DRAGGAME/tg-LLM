@@ -5,10 +5,11 @@ from aiogram import Dispatcher
 from config import bot
 from database.start_db import StartDB
 from handlers.begin_handler import begin_router
+from handlers.ml_handler import ml_handler
 
 dp = Dispatcher()
 
-dp.include_router(begin_router)
+dp.include_routers(begin_router, ml_handler)
 logging.basicConfig(level=logging.DEBUG,
                     format='[%(asctime)s] #%(levelname)-4s %(filename)s:'
                            '%(lineno)d - %(name)s - %(message)s'

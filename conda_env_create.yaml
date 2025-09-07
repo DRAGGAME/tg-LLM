@@ -12,3 +12,5 @@ dependencies:
   - pip:
       - aiogram >= 3.5.0
       - python-dotenv
+      - g4f[standard]
+
