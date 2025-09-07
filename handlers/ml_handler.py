@@ -15,7 +15,7 @@ async def docx_handler(message: Message):
     print("test")
     model = await sqlbase_request.get_user_model(str(message.chat.id))
 
-    if "short_description" in model:
+    if "short_description" == model[0][0]:
         file_id = message.document.file_id
         file = await bot.get_file(file_id)
         file_path = file.file_path
