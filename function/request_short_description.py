@@ -13,7 +13,7 @@ async def split_text(text, max_len=50):
         start = end
     return chunks
 
-async def request_short_description(file_name: str) -> str:
+async def request_short_description(file_name: str) -> list:
     client = Client()
     docx = Document()
     docx.LoadFromFile(f"./{file_name}")
@@ -29,7 +29,7 @@ async def request_short_description(file_name: str) -> str:
                 messages=[{"role": "system", "content": "Ты - высоко квалифицированный специалист по анализу текста. Твоя главная задача - это укоротить текст документа."
                                                     " Ты предоставляешь данные ученику. По тексту - пойми, какого класса этот ученик"
                                                     "Входные данные: текст документа"
-                                                    "выходные данные: краткое описание документа к подготовке к вопросам"
+                                                    "выходные данные: краткое описание документа к подготовке к вопросам. Используй разметку HTML"
                                                     "Делай шаг за шагом:"
                                                     "1. Проанализируй текст и выдели ключевые моменты"
                                                     "2. По каждому ключевому моменту - анализируй подтемы этого момента"
@@ -57,10 +57,13 @@ async def request_short_description(file_name: str) -> str:
                                                     "5. Собери из кратких описаний - краткое описание всего текста."},
                     {"role": "user", "content": chunk}
                 ],
-                provider=g4f.Provider.ApiAirforce,
+                provider=g4f.Provider.Blackbox      ,
             )
     for chunk in response_generator:
         result += str(chunk)
     match = re.search(r"content='(.*?)'", result)
     text = match.group(1)
-    return text
+
+    chunks_finnaly = await split_text(text, max_len=4096)
+
+    return chunks_finnaly

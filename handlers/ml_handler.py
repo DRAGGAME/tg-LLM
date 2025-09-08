@@ -1,3 +1,4 @@
+from aiofiles import os
 from aiogram import Router, F
 from aiogram.types import Message
 
@@ -22,5 +23,9 @@ async def docx_handler(message: Message):
         print(file_path)
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
 
-        response = await request_short_description(f"{file_path.split('/')[-1]}")
-        await message.answer(response)
+        responses_list = await request_short_description(f"{file_path.split('/')[-1]}")
+
+        await os.remove(f"{file_path.split('/')[-1]}")
+
+        for response in responses_list:
+            await message.answer(response)
