@@ -2,7 +2,6 @@ import re
 import g4f
 from g4f import Client
 from spire.doc import Document, SpireException
-import fitz  # PyMuPDF
 import asyncio
 import os
 
@@ -11,7 +10,7 @@ async def split_text(text, max_len=50):
     chunks = []
     start = 0
     while start < len(text):
-        end = min(start + max_len, len(text))
+        end = start + max_len
         chunks.append(text[start:end])
         start = end
     return chunks
@@ -20,6 +19,7 @@ async def split_text(text, max_len=50):
 async def request_short_description(file_name: str) -> list:
     client = Client()
     text = ""
+
     _, file_extension = os.path.splitext(file_name)
 
     if file_extension.lower() == ".docx":
@@ -29,15 +29,6 @@ async def request_short_description(file_name: str) -> list:
             text = docx.GetText()
         except SpireException as e:
             print(f"Ошибка при загрузке DOCX файла: {e}")
-            return []
-    elif file_extension.lower() == ".pdf":
-        try:
-            pdf_document = fitz.open(f"./{file_name}")
-            for page_num in range(len(pdf_document)):
-                page = pdf_document.load_page(page_num)
-                text += page.get_text()
-        except Exception as e:
-            print(f"Ошибка при загрузке PDF файла: {e}")
             return []
     else:
         print("Поддерживаемые форматы файлов: .docx и .pdf")
@@ -57,13 +48,18 @@ async def request_short_description(file_name: str) -> list:
                                      "Твоя главная задача - это укоротить текст документа. "
                                      "Ты предоставляешь данные ученику. По тексту - пойми, какого класса этот ученик."
                                      "Входные данные: текст документа"
-                                     "Выходные данные: краткое описание документа к подготовке к вопросам. Используй разметку HTML"
+                                     " Для выяснения, что надо вывести - смотрим выходные данные."
                                      "Делай шаг за шагом:"
-                                     "1. Проанализируй текст и выдели ключевые моменты."
-                                     "2. По каждому ключевому моменту - анализируй подтемы этого момента."
-                                     "3. По каждой подтеме - укороти текст до состояния, чтобы можно было быстро выучить."
-                                     "4. Собери из подтем - краткое описание момента."
-                                     "5. Собери из кратких описаний - краткое описание всего текста.")},
+                                     "1. Проанализируй, есть ли вопросы в тексте"
+                                     "2. Если вопросы есть, то собери из текста самое важное для ответов на них."
+                                     "Если вопросов нет, то просто укороти текст и переходи к пункту 5"
+                                     "3. Если символов для одного ответа больше 300 - укороти текст до 300 символов."
+                                     "4. Отвечай ясно и кратко"
+                                     "5. Сделай краткий, возможный ответ на вопрос"
+                                     "6. Вернись к пункту 1, если ты нашёл что-то новое и они не сходятся с вопросом, то перепроверь ещё раз. Максимальное количество попыток 5, в крайнем случае - выдай текст, как есть"
+                                     "Выходные данные: Сами вопросы и ответ на них"
+                                     ". Просто краткое описание текста. Не обращай внимание на всякие вещи, по типу spire... И т.д"
+                                     "Если нет вопросов, то просто укороти текст для нормального пересказа и понятия смысла. Не используй разметки HTML и Markdown и т.д. Из важного: не расписывай по пунктам, которые написаны, используй выходные данные")},
                         {"role": "user", "content": chunk}
                     ],
                     provider=g4f.Provider.AnyProvider,
@@ -90,16 +86,3 @@ async def request_short_description(file_name: str) -> list:
     return final_chunks
 
 
-# Пример использования
-if __name__ == "__main__":
-    import asyncio
-
-
-    async def main():
-        file_name = "file_132.pdf"  # Замените на ваш файл
-        result = await request_short_description(file_name)
-        for chunk in result:
-            print(chunk)
-
-
-    asyncio.run(main())
