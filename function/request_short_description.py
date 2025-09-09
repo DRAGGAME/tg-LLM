@@ -2,7 +2,7 @@ import re
 import g4f
 from g4f import Client
 from spire.doc import Document, SpireException
-from spire.pdf import PdfDocument, FileFormat
+import fitz  # PyMuPDF
 import asyncio
 import os
 
@@ -11,7 +11,7 @@ async def split_text(text, max_len=50):
     chunks = []
     start = 0
     while start < len(text):
-        end = start + max_len
+        end = min(start + max_len, len(text))
         chunks.append(text[start:end])
         start = end
     return chunks
@@ -20,7 +20,6 @@ async def split_text(text, max_len=50):
 async def request_short_description(file_name: str) -> list:
     client = Client()
     text = ""
-
     _, file_extension = os.path.splitext(file_name)
 
     if file_extension.lower() == ".docx":
@@ -31,17 +30,15 @@ async def request_short_description(file_name: str) -> list:
         except SpireException as e:
             print(f"Ошибка при загрузке DOCX файла: {e}")
             return []
-
     elif file_extension.lower() == ".pdf":
         try:
-            pdf = PdfDocument()
-            pdf.LoadFromFile(f"./{file_name}")
-            for page in range(pdf.Pages.Count):
-                text += pdf.Pages[page].ExtractText(True)
+            pdf_document = fitz.open(f"./{file_name}")
+            for page_num in range(len(pdf_document)):
+                page = pdf_document.load_page(page_num)
+                text += page.get_text()
         except Exception as e:
             print(f"Ошибка при загрузке PDF файла: {e}")
             return []
-
     else:
         print("Поддерживаемые форматы файлов: .docx и .pdf")
         return []
@@ -93,3 +90,16 @@ async def request_short_description(file_name: str) -> list:
     return final_chunks
 
 
+# Пример использования
+if __name__ == "__main__":
+    import asyncio
+
+
+    async def main():
+        file_name = "file_132.pdf"  # Замените на ваш файл
+        result = await request_short_description(file_name)
+        for chunk in result:
+            print(chunk)
+
+
+    asyncio.run(main())

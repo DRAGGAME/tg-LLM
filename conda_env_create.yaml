@@ -10,7 +10,8 @@ dependencies:
   - setuptools>=51.0.0
   - aiosqlite
   - pip:
-      - Spire.Doc
+      - PyMuPDF
+      - Spire
       - aiogram >= 3.5.0
       - python-dotenv
       - g4f[all]
