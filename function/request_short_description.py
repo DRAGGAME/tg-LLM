@@ -21,8 +21,8 @@ async def request_short_description(file_name: str) -> list:
     text = ""
 
     _, file_extension = os.path.splitext(file_name)
-
-    if file_extension.lower() in [".docx", ".odt", ".doc"]:
+    print("test")
+    if file_extension.lower() in [".docx", ".doc", '.odt']:
         try:
             docx = Document()
             docx.LoadFromFile(f"./{file_name}")
