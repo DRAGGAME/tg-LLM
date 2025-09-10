@@ -1,3 +1,5 @@
+from ast import Index
+
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
@@ -22,11 +24,13 @@ async def start_handler(message: Message):
     print(data)
     if not data:
         await sqlite.insert_user(username, str(user_id))
-
-    if data[0][0] == "short_description":
+    try:
+        if data[0][0] == "short_description":
+            mode = "Краткое описание документа"
+        else:
+            raise Exception("Неизвестный режим раError:боты")
+    except IndexError:
         mode = "Краткое описание документа"
-    else:
-        raise Exception("Неизвестный режим работы")
 
     await bot.unpin_all_chat_messages(chat_id=message.chat.id)
     await sqlite.close()

@@ -27,6 +27,7 @@ async def request_short_description(file_name: str) -> list:
             docx = Document()
             docx.LoadFromFile(f"./{file_name}")
             text = docx.GetText()
+
         except SpireException as e:
             print(f"Ошибка при загрузке DOCX файла: {e}")
             return []
@@ -66,6 +67,9 @@ async def request_short_description(file_name: str) -> list:
                 response = ''.join([str(chunk) for chunk in response_generator])
                 match = re.search(r"content='(.*?)'", response)
                 if match:
+                    if match.group(1) == "" or match.group(1) == " ":
+                        continue
+
                     return match.group(1)
             except g4f.errors.ResponseError as e:
                 print(f"Ошибка: {e}")

@@ -21,7 +21,7 @@ async def main():
     start_db = StartDB()
     await start_db.start_db()
     await start_db.connect()
-    print(await start_db.select_table())
+    # print(await start_db.select_table())
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
