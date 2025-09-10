@@ -31,7 +31,7 @@ async def docx_handler(message: Message, state: FSMContext):
                               f"Текущий уровень углублённости вопросов: 1(лёгкий)\n"
                               f"Текущий уровень количества вопросов: 1(маленький)\n", reply_markup=keyboard_a_documents)
 
-@ml_handler.message(InlineChoiceSettings.filter(F.setting_action=="run"))
+@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="run"))
 async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.connect()
