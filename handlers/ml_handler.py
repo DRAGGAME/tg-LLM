@@ -1,5 +1,5 @@
 from aiofiles import os
-from aiogram import Router, F
+from aiogram import Router, F, flags
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
@@ -22,7 +22,7 @@ class DocumentHandler(StatesGroup):
 async def docx_handler(message: Message, state: FSMContext):
     await sqlbase_request.connect()
     user_model = await sqlbase_request.get_user_model(str(message.chat.id))
-    keyboard_a_documents = await fabric_ml.choice_settings_text(user_model[0][0])
+    keyboard_a_documents = await fabric_ml.choice_fabric()
     await sqlbase_request.close()
     file_id = message.document.file_id
     await state.update_data(new_file_id=file_id)
