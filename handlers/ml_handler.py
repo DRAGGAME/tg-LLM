@@ -81,6 +81,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         await os.remove(f"{file_path.split('/')[-1]}")
 
         for response in responses_list:
+            if resp
             await callback.message.answer(response)
 
         await state.clear()

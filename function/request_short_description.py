@@ -87,7 +87,7 @@ async def request_short_description(file_name: str, level_size: int, level_quest
                 response = ''.join([str(chunk) for chunk in response_generator])
                 match = re.search(r"content='(.*?)'", response)
                 if match:
-                    if match.group(1) == "" or match.group(1) == " ":
+                    if match.group(1) == "" or match.group(1) == " " or match.group(1) == "error code: 502":
                         continue
 
                     return match.group(1)
