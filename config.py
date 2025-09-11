@@ -7,4 +7,4 @@ from aiogram.enums import ParseMode
 from dotenv import load_dotenv
 load_dotenv()
 
-bot = Bot(token=os.getenv("TG_KEY"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+bot = Bot(token=os.getenv("TG_KEY"), default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
