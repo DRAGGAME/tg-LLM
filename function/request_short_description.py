@@ -99,6 +99,7 @@ async def request_short_description(file_name: str, level_size: int, level_quest
                                     Ясное изложение ключевой информации о произведении.
                                     Последовательный анализ на заданных уровнях.
                                     Четкие выводы о значимости и влиянии произведения.
+                                    Чёткие вопросы для проверки и ответы на них
                                 
                                 Дополнительные рекомендации:
                                 
@@ -133,6 +134,8 @@ async def request_short_description(file_name: str, level_size: int, level_quest
 
     full_summary = ' '.join(summaries)
     full_summary = full_summary.replace("\\n", "\n")
+    full_summary = full_summary.replace("**", "")
+
     final_chunks = await split_text(full_summary, max_len=4096)
     return final_chunks
 
