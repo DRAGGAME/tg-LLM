@@ -50,7 +50,7 @@ class InlineChoiceFabric(MainFabric):
         big_text_button = InlineKeyboardButton(
             text="Настройки текста",
             callback_data=InlineChoiceSettings(
-                setting_action="big_text",
+                setting_action="settings_text",
             ).pack(),
         )
 

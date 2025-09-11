@@ -8,7 +8,7 @@ from config import bot
 from database.user_queries import UserQueries
 from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceSettings
 from function.request_short_description import request_short_description
-from handlers.begin_handler import sqlite
+
 
 ml_handler = Router(name="ml_router")
 sqlbase_request = UserQueries()
@@ -31,18 +31,33 @@ async def docx_handler(message: Message, state: FSMContext):
                               f"Текущий уровень углублённости вопросов: 1(лёгкий)\n"
                               f"Текущий уровень количества вопросов: 1(маленький)\n", reply_markup=keyboard_a_documents)
 
+@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings"))
+async def settings_handler(callback: CallbackQuery):
+    await sqlbase_request.connect()
+    model = await sqlbase_request.get_user_model(str(callback.from_user.id))
+    kb = await fabric_ml.choice_mode(model)
+
+    await callback.message.edit_text("Выберите режим работы", reply_markup=kb)
+    await callback.answer()
+
+@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="settings_text"))
+async def settings_text_handler(callback: CallbackQuery):
+    kb = await fabric_ml.choice_size_text()
+    await callback.message.edit_text("Выберите, что вы хотите настроить", reply_markup=kb)
+    await callback.answer()
+
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="run"))
 async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.connect()
-    print("test")
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
 
     if "short_description" == model[0][0]:
+
         file_id = await state.get_value("new_file_id")
         file = await bot.get_file(file_id)
         file_path = file.file_path
-        print(file_path)
+
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
         await callback.answer("Обработка файла...")
         responses_list = await request_short_description(f"{file_path.split('/')[-1]}")
