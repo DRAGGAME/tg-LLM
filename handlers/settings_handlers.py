@@ -37,11 +37,11 @@ async def edit_question_level(callback: CallbackQuery):
 @settings_router.callback_query(InlineChoiceSize.filter(F.size_text.in_([1, 2, 3])))
 async def change_size_text(callback: CallbackQuery, callback_data: CallbackData):
     if callback_data.size_text == 1:
-        keyboard = await fabric_ml.choice_size_text(3)
+        keyboard = await fabric_ml.choice_size_text(1)
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer("Размер текста изменен на 1")
     elif callback_data.size_text == 2:
-        keyboard = await fabric_ml.choice_size_text(3)
+        keyboard = await fabric_ml.choice_size_text(2)
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer("Размер текста изменен на 2")
     elif callback_data.size_text == 3:
