@@ -109,25 +109,25 @@ class InlineChoiceFabric(MainFabric):
 
         return self.builder_inline.as_markup()
 
-    async def choice_size_text(self) -> InlineKeyboardMarkup:
+    async def choice_size_text(self, number_activity: int=1) -> InlineKeyboardMarkup:
         await self.create_builder_inline()
 
         size_button_one = InlineKeyboardButton(
-            text="1",
+            text=f"1{'✅' if number_activity == 1 else '❌'}",
             callback_data=InlineChoiceSize(
                 size_text=1,
             ).pack()
         )
 
         size_button_two = InlineKeyboardButton(
-            text="2",
+            text=f"2{'✅' if number_activity == 2 else '❌'}",
             callback_data=InlineChoiceSize(
                 size_text=2,
             ).pack()
         )
 
         size_button_three = InlineKeyboardButton(
-            text="3",
+            text=f"3{'✅' if number_activity == 3 else '❌'}",
             callback_data=InlineChoiceSize(
                 size_text=3,
             ).pack()
@@ -138,26 +138,26 @@ class InlineChoiceFabric(MainFabric):
 
         return self.builder_inline.as_markup()
 
-    async def choice_question_level(self) -> InlineKeyboardMarkup:
+    async def choice_question_level(self, level_activity: int=1) -> InlineKeyboardMarkup:
 
         await self.create_builder_inline()
 
         level_button_one = InlineKeyboardButton(
-            text="1",
+            text=f"1{'✅' if level_activity == 1 else '❌'}",
             callback_data=QuestionLevelChoice(
                 question_level=1,
             ).pack()
         )
 
         level_button_two = InlineKeyboardButton(
-            text="2",
+            text=f"2{'✅' if level_activity == 2 else '❌'}",
             callback_data=QuestionLevelChoice(
                 question_level=2,
             ).pack()
         )
 
         level_button_three = InlineKeyboardButton(
-            text="3",
+            text=f"3{'✅' if level_activity == 3 else '❌'}",
             callback_data=QuestionLevelChoice(
                 question_level=3,
             ).pack()
