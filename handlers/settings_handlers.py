@@ -19,7 +19,7 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData)
         await fabric_ml.choice_size_text(3)
         await callback.answer("Размер текста изменен на 3")
 
-@settings_router.callback_query(QuestionLevelChoice.filter(F.size_text.in_([1, 2, 3])))
+@settings_router.callback_query(QuestionLevelChoice.filter(F.question_level.in_([1, 2, 3])))
 async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData):
     if callback_data.size_text == 1:
         await fabric_ml.choice_question_level(1)
