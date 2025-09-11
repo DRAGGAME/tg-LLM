@@ -64,12 +64,15 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         level_size = await state.get_value("size_text")
         question_level = await state.get_value("question_level")
 
+
+
         print(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
 
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
         await callback.answer("Обработка файла...")
 
-        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size), int(question_level))
+        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size) if not None else 1,
+                                                         int(question_level) if not None else 1)
 
         await os.remove(f"{file_path.split('/')[-1]}")
 
