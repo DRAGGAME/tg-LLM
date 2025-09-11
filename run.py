@@ -6,7 +6,7 @@ from database.start_db import StartDB
 from handlers.begin_handler import begin_router
 from handlers.ml_handler import ml_handler
 from handlers.settings_handlers import settings_router
-from logger import logger as logging
+# from logger import logger as logging
 
 dp = Dispatcher()
 
