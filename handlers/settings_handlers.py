@@ -1,6 +1,7 @@
 from aiogram import Router, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.callback_data import CallbackData
+from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from database.user_queries import UserQueries
@@ -25,9 +26,6 @@ async def edit_size_text(callback: CallbackQuery):
 
 @settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "Questions"))
 async def edit_question_level(callback: CallbackQuery):
-    await sqlbase_request.connect()
-    last_mode = await sqlbase_request.get_user_model(str(callback.from_user.id))
-    await sqlbase_request.close()
     keyboard = await fabric_ml.choice_question_level(1)
 
     await callback.message.edit_reply_markup(reply_markup=keyboard)
@@ -35,23 +33,27 @@ async def edit_question_level(callback: CallbackQuery):
 
 
 @settings_router.callback_query(InlineChoiceSize.filter(F.size_text.in_([1, 2, 3])))
-async def change_size_text(callback: CallbackQuery, callback_data: CallbackData):
-    if callback_data.size_text == 1:
-        keyboard = await fabric_ml.choice_size_text(1)
-        await callback.message.edit_reply_markup(reply_markup=keyboard)
-        await callback.answer("Размер текста изменен на 1")
-    elif callback_data.size_text == 2:
-        keyboard = await fabric_ml.choice_size_text(2)
-        await callback.message.edit_reply_markup(reply_markup=keyboard)
-        await callback.answer("Размер текста изменен на 2")
-    elif callback_data.size_text == 3:
-        keyboard = await fabric_ml.choice_size_text(3)
-        await callback.message.edit_reply_markup(reply_markup=keyboard)
-        await callback.answer("Размер текста изменен на 3")
+async def change_size_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
+    try:
 
+        if callback_data.size_text == 1:
+            keyboard = await fabric_ml.choice_size_text(1)
+            await callback.message.edit_reply_markup(reply_markup=keyboard)
+            await callback.answer("Размер текста изменен на 1")
+        elif callback_data.size_text == 2:
+            keyboard = await fabric_ml.choice_size_text(2)
+            await callback.message.edit_reply_markup(reply_markup=keyboard)
+            await callback.answer("Размер текста изменен на 2")
+        elif callback_data.size_text == 3:
+            keyboard = await fabric_ml.choice_size_text(3)
+            await callback.message.edit_reply_markup(reply_markup=keyboard)
+            await callback.answer("Размер текста изменен на 3")
+        await state.update_data(size_text=callback_data.size_text)
+    except TelegramBadRequest:
+        await callback.answer("Размер текста остался такой же...")
 
 @settings_router.callback_query(QuestionLevelChoice.filter(F.question_level.in_([1, 2, 3])))
-async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData):
+async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
         if callback_data.question_level == 1:
             keyboard = await fabric_ml.choice_question_level(1)
@@ -67,5 +69,6 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
             keyboard = await fabric_ml.choice_question_level(3)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
             await callback.answer("Уровень детализации изменен на 3")
+        await state.update_data(question_level=callback_data.question_level)
     except TelegramBadRequest:
-        await callback.answer("Уровень ")
+        await callback.answer("Уровень детализации остался такой же...")

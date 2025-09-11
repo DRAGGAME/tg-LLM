@@ -55,18 +55,23 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
-
     if "short_description" == model[0][0]:
 
         file_id = await state.get_value("new_file_id")
         file = await bot.get_file(file_id)
         file_path = file.file_path
 
+        level_size = await state.get_value("size_text")
+        question_level = await state.get_value("question_level")
+
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
         await callback.answer("Обработка файла...")
-        responses_list = await request_short_description(f"{file_path.split('/')[-1]}")
+
+        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size), int(question_level))
 
         await os.remove(f"{file_path.split('/')[-1]}")
 
         for response in responses_list:
             await callback.message.answer(response)
+
+        await state.clear()
