@@ -8,7 +8,7 @@ from config import bot
 from database.user_queries import UserQueries
 from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceSettings
 from function.request_short_description import request_short_description
-
+from logger import logger
 
 ml_handler = Router(name="ml_router")
 sqlbase_request = UserQueries()
@@ -63,6 +63,8 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
         level_size = await state.get_value("size_text")
         question_level = await state.get_value("question_level")
+
+        logger.info(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
 
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
         await callback.answer("Обработка файла...")
