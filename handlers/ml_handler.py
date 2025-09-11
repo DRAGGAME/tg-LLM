@@ -35,6 +35,7 @@ async def docx_handler(message: Message, state: FSMContext):
 async def settings_handler(callback: CallbackQuery):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.from_user.id))
+    await sqlbase_request.close()
     kb = await fabric_ml.choice_mode(model)
 
     await callback.message.edit_text("Выберите режим работы", reply_markup=kb)
@@ -42,7 +43,10 @@ async def settings_handler(callback: CallbackQuery):
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="settings_text"))
 async def settings_text_handler(callback: CallbackQuery):
-    kb = await fabric_ml.choice_size_text()
+    await sqlbase_request.connect()
+    model = await sqlbase_request.get_user_model(str(callback.from_user.id))
+    await sqlbase_request.close()
+    kb = await fabric_ml.choice_settings_text(model[0][0])
     await callback.message.edit_text("Выберите, что вы хотите настроить", reply_markup=kb)
     await callback.answer()
 
