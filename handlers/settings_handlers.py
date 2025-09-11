@@ -16,7 +16,7 @@ async def edit_size_text(callback: CallbackQuery):
     await sqlbase_request.connect()
     last_mode = await sqlbase_request.get_user_model(str(callback.from_user.id))
     await sqlbase_request.close()
-    keyboard = await fabric_ml.choice_settings_text(last_mode)
+    keyboard = await fabric_ml.choice_settings_text(last_mode[0][0])
 
     await callback.message.edit_reply_markup(reply_markup=keyboard)
     await callback.answer()
@@ -27,7 +27,7 @@ async def edit_question_level(callback: CallbackQuery):
     await sqlbase_request.connect()
     last_mode = await sqlbase_request.get_user_model(str(callback.from_user.id))
     await sqlbase_request.close()
-    keyboard = await fabric_ml.choice_question_level(last_mode)
+    keyboard = await fabric_ml.choice_question_level(last_mode[0][0])
 
     await callback.message.edit_reply_markup(reply_markup=keyboard)
     await callback.answer()
