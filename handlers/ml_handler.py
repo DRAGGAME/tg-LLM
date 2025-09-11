@@ -64,10 +64,10 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         level_size = await state.get_value("size_text")
         question_level = await state.get_value("question_level")
 
-        if level_size is None:
+        if bool(level_size) is False:
             level_size = 1
 
-        if question_level is None:
+        if bool(question_level) is False:
             level_size = 1
 
         print(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
