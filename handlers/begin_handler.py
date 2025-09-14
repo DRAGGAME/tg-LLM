@@ -13,7 +13,6 @@ sqlite = UserQueries()
 
 @begin_router.message(CommandStart())
 async def start_handler(message: Message):
-    kb = await keyboard_choice.choice_fabric()
     await sqlite.connect()
 
     user_id = message.from_user.id
@@ -25,7 +24,7 @@ async def start_handler(message: Message):
 
     # await bot.unpin_all_chat_messages(chat_id=message.chat.id)
     await sqlite.close()
-    await message.answer(f"Приветствую вас, пришлите файл и настройте", reply_markup=kb)
+    await message.answer(f"Приветствую вас, пришлите файл и настройте")
 
     # await bot_message.pin()
 

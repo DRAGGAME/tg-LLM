@@ -20,14 +20,21 @@ class DocumentHandler(StatesGroup):
 
 @ml_handler.message(F.document)
 async def docx_handler(message: Message, state: FSMContext):
+
     await sqlbase_request.connect()
     user_model = await sqlbase_request.get_user_model(str(message.chat.id))
     keyboard_a_documents = await fabric_ml.choice_fabric()
     await sqlbase_request.close()
+
     file_id = message.document.file_id
     await state.update_data(new_file_id=file_id)
+
+    if user_model[0][0] == "short_description":
+        name_user_model = "Краткое описание документа"
+    else:
+        name_user_model = "Техническая ошибка"
     await message.answer(text="Какие параметры вы будете использовать?\n\n"
-                              f"Текущая модель: {user_model[0][0]}\n"
+                              f"Текущая модель: {name_user_model}\n"
                               f"Текущий уровень углублённости вопросов: 1(лёгкий)\n"
                               f"Текущий уровень количества вопросов: 1(маленький)\n", reply_markup=keyboard_a_documents)
 
@@ -68,7 +75,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
             level_size = 1
 
         if bool(question_level) is False:
-            level_size = 1
+            question_level = 1
 
         print(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
 

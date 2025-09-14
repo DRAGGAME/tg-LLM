@@ -37,6 +37,7 @@ class InlineChoiceFabric(MainFabric):
 
         super().__init__()
 
+
     async def choice_fabric(self) -> InlineKeyboardMarkup:
         await self.create_builder_inline()
 
