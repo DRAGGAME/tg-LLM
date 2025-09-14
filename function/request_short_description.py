@@ -9,6 +9,7 @@ import os
 
 from function.convert_docx import convert_docx_to_text
 from function.convert_pdf import convert_pdf_to_text
+from function.convert_xml import convert_xml_to_text
 
 
 async def split_text(text, max_len=50):
@@ -32,6 +33,9 @@ async def request_short_description(file_name: str, level_size: int, level_quest
 
     elif file_extension.lower() in [".pdf"]:
         text = await convert_pdf_to_text(file_name)
+
+    elif file_extension.lower() in [".xls", ".xlsx", ".xlsm", ".ods", ".csv"]:
+        text = await convert_xml_to_text(file_name)
     else:
         print("Поддерживаемые форматы файлов: .docx и .pdf")
         return []
