@@ -35,5 +35,3 @@ async def cancel_handler(callback: CallbackQuery):
 
     await callback.message.edit_text("Вы зашли в меню настроек. Что вы хотите изменить?", reply_markup=kb)
     await callback.answer()
-
-
