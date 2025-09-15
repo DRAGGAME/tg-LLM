@@ -14,13 +14,13 @@ ml_handler = Router(name="ml_router")
 sqlbase_request = UserQueries()
 fabric_ml = InlineChoiceFabric()
 
+
 class DocumentHandler(StatesGroup):
     document_setting = State()
 
 
 @ml_handler.message(F.document)
 async def docx_handler(message: Message, state: FSMContext):
-
     await sqlbase_request.connect()
     user_model = await sqlbase_request.get_user_model(str(message.chat.id))
     keyboard_a_documents = await fabric_ml.choice_fabric()
@@ -38,6 +38,7 @@ async def docx_handler(message: Message, state: FSMContext):
                               f"Текущий уровень углублённости вопросов: 1(лёгкий)\n"
                               f"Текущий уровень количества вопросов: 1(маленький)\n", reply_markup=keyboard_a_documents)
 
+
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings"))
 async def settings_handler(callback: CallbackQuery):
     await sqlbase_request.connect()
@@ -48,7 +49,8 @@ async def settings_handler(callback: CallbackQuery):
     await callback.message.edit_text("Выберите режим работы", reply_markup=kb)
     await callback.answer()
 
-@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="settings_text"))
+
+@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings_text"))
 async def settings_text_handler(callback: CallbackQuery):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.from_user.id))
@@ -57,9 +59,9 @@ async def settings_text_handler(callback: CallbackQuery):
     await callback.message.edit_text("Выберите, что вы хотите настроить", reply_markup=kb)
     await callback.answer()
 
-@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action=="run"))
-async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
+@ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "run"))
+async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
     if "short_description" == model[0][0]:

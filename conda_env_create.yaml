@@ -14,6 +14,7 @@ dependencies:
       - Spire
       - Spire.pdf
       - Spire.doc
+      - Spire.Presentation
       - aiogram >= 3.5.0
       - python-dotenv
       - g4f[all]
