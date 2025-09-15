@@ -110,7 +110,7 @@ class InlineChoiceFabric(MainFabric):
 
         return self.builder_inline.as_markup()
 
-    async def choice_size_text(self, number_activity: int=1) -> InlineKeyboardMarkup:
+    async def change_question_data(self, number_activity: int=1) -> InlineKeyboardMarkup:
         await self.create_builder_inline()
 
         size_button_one = InlineKeyboardButton(
