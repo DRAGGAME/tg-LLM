@@ -12,6 +12,8 @@ dependencies:
   - pip:
       - PyMuPDF
       - Spire
+      - Spire.pdf
+      - Spire.doc
       - aiogram >= 3.5.0
       - python-dotenv
       - g4f[all]

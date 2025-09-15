@@ -1,9 +1,6 @@
 import re
 import g4f
-import spire
-from aiogram.fsm.context import FSMContext
 from g4f import Client
-from spire.doc import Document, SpireException
 import asyncio
 import os
 
@@ -29,13 +26,13 @@ async def request_short_description(file_name: str, level_size: int, level_quest
 
     _, file_extension = os.path.splitext(file_name)
     if file_extension.lower() in [".docx", ".doc", '.odt']:
-        text = await convert_docx_to_text(file_name)
+        text += await convert_docx_to_text(file_name)
 
     elif file_extension.lower() in [".pdf"]:
-        text = await convert_pdf_to_text(file_name)
+        text += await convert_pdf_to_text(file_name)
 
     elif file_extension.lower() in [".xls", ".xlsx", ".xlsm", ".ods", ".csv"]:
-        text = await convert_xml_to_text(file_name)
+        text += await convert_xml_to_text(file_name)
     else:
         print("Поддерживаемые форматы файлов: .docx и .pdf")
         return []
@@ -43,24 +40,55 @@ async def request_short_description(file_name: str, level_size: int, level_quest
     async def process_chunk(text):
         while True:
             try:
-                response_generator = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system",
-                         "content": ("""Цель:
-
-                                Создание полного и последовательного анализа выбранного художественного произведения с использованием трёх уровней глубины.
+                system_promt = """
+                                Цель:
+                                Создание полного и последовательного анализа выбранного текста с 
+                                использованием трёх уровней глубины.
                                 Входные данные:
+                                Текст
                                 
-                                    Название произведения и автор
-                                    Объем текста:
-                                        Первый уровень: 2000 ±100 символов.
-                                        Второй уровень: 4000 ±200 символов.
-                                        Третий уровень: 6000 ±300 символов.
-                                    Структура анализа:
-                                        Три уровня глубины анализа (фактура → интерпретация → философия и критика).
+                                Объем текста:
+                                    Первый уровень: 2000 ±100 символов.
+                                    Второй уровень: 4000 ±200 символов.
+                                    Третий уровень: 6000 ±300 символов.
+                                Структура анализа:
+                                    Заранее определи тип текста.
+                                    Три уровня глубины анализа (фактура → интерпретация → философия и критика).
                                 
                                 Порядок действий:
+                                Если тип текста 
+                                явно научный или для обучения по техническим вещам(Математика, Физика, Информатика и т.д)
+                                , то пользуйся этими действиями: 
+                                
+                                1. Подготовка:
+                                    Определение, что этот документ должен пояснить
+                                    Задачи решаемые в материале и примеры, где можно применить в жизни
+                                
+                                2. Объяснение материала
+                                    Решение задач из файлов
+                                    Вывод некой важной вещи или вещей для счёта(Формул, теорем, аксиом и т.д) из файла с объяснением
+                                    
+                                3. Закрепление
+                                    Вопросы по тексту
+                                    Задачи по теме текста
+                                
+                                Eсли тип текста явно есстественно-научный(География, Биология, Обществознание и т.д) :
+                                
+                                1. Подготовка:
+                                    Темы которые стоит повторить
+                                    Вопросы подводящие к данной теме
+                                
+                                2. Объяснение материала
+                                    Объяснение тем и подтем
+                                    Описание ситуаций, если они есть
+                                    Дополнительные ситуации
+                                
+                                3. Закрепление
+                                    Вопросы по тексту
+                                    Задачи на подумать
+                                    Задачи на каждые подтемы и тесы                                    
+                                
+                                Если тип текста явно художественный:
                                 1. Общая характеристика:
                                 
                                     Определение жанра произведения.
@@ -110,12 +138,17 @@ async def request_short_description(file_name: str, level_size: int, level_quest
                                     При анализе персонажей выделяйте динамику их внутреннего мира.
                                     Обращайте внимание на символику, используемую автором.
                                     Формируйте собственные выводы, избегая шаблонных утверждений.
-                                    Избегайте разметок HTML и Markdown.""")},
+                                    Избегайте разметок HTML и Markdown."""
 
+                response_generator = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": system_promt},
                         {"role": "user", "content": text}
                     ],
                     provider=g4f.Provider.AnyProvider,
                 )
+
                 response = ''.join([str(chunk) for chunk in response_generator])
                 match = re.search(r"content='(.*?)'", response)
                 if match:
@@ -141,5 +174,3 @@ async def request_short_description(file_name: str, level_size: int, level_quest
 
     final_chunks = await split_text(full_summary, max_len=4096)
     return final_chunks
-
-
