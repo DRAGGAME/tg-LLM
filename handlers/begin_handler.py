@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
+from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from config import bot
@@ -30,8 +31,23 @@ async def start_handler(message: Message):
 
 
 @begin_router.callback_query(InlineChoiceMode.filter(F.mode == "cancel"))
-async def cancel_handler(callback: CallbackQuery):
+async def cancel_handler(callback: CallbackQuery, state: FSMContext):
     kb = await keyboard_choice.choice_fabric()
 
-    await callback.message.edit_text("Вы зашли в меню настроек. Что вы хотите изменить?", reply_markup=kb)
+    level = await state.get_value("level")
+    level_question = await state.get_value("level_question")
+
+    if not level:
+        level = 1
+        await state.update_data(level=level)
+
+    if not level_question:
+        level_question = 1
+        await state.update_data(level_question=level_question)
+
+    message_text = ("Какие параметры вы будете использовать?\n\n"
+                  f"Текущий уровень углублённости вопросов: {level_question}\n"
+                  f"Текущий уровень детализации: {level}")
+
+    await callback.message.edit_text(f"{message_text}", reply_markup=kb)
     await callback.answer()

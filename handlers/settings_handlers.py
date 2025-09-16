@@ -56,7 +56,8 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                       f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                      f"Текущий уровень углубённости детализации: {callback_data.level}\n")
+                      f"Текущий уровень детализации: {callback_data.level}\n")
+
         await callback.message.edit_text(message_text, reply_markup=keyboard)
         await state.update_data(question_data=callback_data.size_text)
     except TelegramBadRequest:
@@ -89,7 +90,8 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                       f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                      f"Текущий уровень углубённости: {callback_data.question_level}\n")
+                      f"Текущий уровень детализации: {callback_data.question_level}\n")
+
         await callback.message.edit_text(message_text, reply_markup=keyboard)
 
         await state.update_data(question_level=callback_data.question_level)

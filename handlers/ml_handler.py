@@ -29,14 +29,9 @@ async def docx_handler(message: Message, state: FSMContext):
     file_id = message.document.file_id
     await state.update_data(new_file_id=file_id)
 
-    if user_model[0][0] == "short_description":
-        name_user_model = "Краткое описание документа"
-    else:
-        name_user_model = "Техническая ошибка"
     await message.answer(text="Какие параметры вы будете использовать?\n\n"
-                              f"Текущая модель: {name_user_model}\n"
-                              f"Текущий уровень углублённости вопросов: 1(лёгкий)\n"
-                              f"Текущий уровень количества вопросов: 1(маленький)\n", reply_markup=keyboard_a_documents)
+                              f"Текущий уровень углублённости вопросов: 1\n"
+                              f"Текущий уровень детализации: 1\n", reply_markup=keyboard_a_documents)
 
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings"))
