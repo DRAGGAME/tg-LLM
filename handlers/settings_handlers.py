@@ -36,15 +36,15 @@ async def edit_question_level(callback: CallbackQuery):
 async def change_size_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
         keyboard = await fabric_ml.change_question_data(1)
-        if callback_data.size_text == 1:
+        if callback_data.level == 1:
             keyboard = await fabric_ml.change_question_data(1)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
             await callback.answer("Вдумчивость изменена на 1", show_alert=True)
-        elif callback_data.size_text == 2:
+        elif callback_data.level == 2:
             keyboard = await fabric_ml.change_question_data(2)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
             await callback.answer("Вдумчивость изменена на 2", show_alert=True)
-        elif callback_data.size_text == 3:
+        elif callback_data.level == 3:
             keyboard = await fabric_ml.change_question_data(3)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
             await callback.answer("Вдумчивость изменена на 3", show_alert=True)
