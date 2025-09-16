@@ -61,6 +61,7 @@ async def settings_text_handler(callback: CallbackQuery):
 
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "run"))
+@flags.chat_action("typing")
 async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
@@ -82,13 +83,13 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         print(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
 
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
+        await callback.message.delete()
         await callback.answer("Обработка файла...")
 
         responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size),
                                                          int(question_level))
 
         await os.remove(f"{file_path.split('/')[-1]}")
-
         for response in responses_list:
             await callback.message.answer(response)
 
