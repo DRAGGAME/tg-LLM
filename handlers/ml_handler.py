@@ -82,7 +82,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
 
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
-        await callback.message.delete()
+        # await callback.message.delete()
         await callback.answer("Обработка файла...")
 
         responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size),
