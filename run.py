@@ -2,6 +2,8 @@ import asyncio
 import logging
 
 from aiogram import Dispatcher
+from aiogram.utils.chat_action import ChatActionMiddleware
+
 from config import bot
 from database.start_db import StartDB
 from handlers.begin_handler import begin_router
@@ -23,6 +25,7 @@ async def main():
     await start_db.start_db()
     await start_db.connect()
     # print(await start_db.select_table())
+    await dp.message.middleware(ChatActionMiddleware())
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

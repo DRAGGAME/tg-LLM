@@ -80,7 +80,6 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         if bool(question_level) is False:
             question_level = 1
 
-        print(f"Обработка файла {file_path}\nРазмер: {level_size}\nУровень вопросов: {question_level}")
 
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
         await callback.message.delete()
