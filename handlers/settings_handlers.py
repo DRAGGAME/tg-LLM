@@ -13,7 +13,7 @@ fabric_ml = InlineChoiceFabric()
 sqlbase_request = UserQueries()
 
 
-@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "size"))
+@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "level"))
 async def edit_size_text(callback: CallbackQuery):
     await sqlbase_request.connect()
     last_mode = await sqlbase_request.get_user_model(str(callback.from_user.id))

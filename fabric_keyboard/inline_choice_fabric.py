@@ -89,9 +89,9 @@ class InlineChoiceFabric(MainFabric):
         if last_mode == "short_description":
 
             size_button = InlineKeyboardButton(
-                text="Размер текста",
+                text="Вдумчивость",
                 callback_data=InlineChoiceTextSettings(
-                    mode_for_text="Вдумчивость",
+                    mode_for_text="level",
                 ).pack()
             )
 
