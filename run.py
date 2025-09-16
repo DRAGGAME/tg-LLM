@@ -25,7 +25,7 @@ async def main():
     await start_db.start_db()
     await start_db.connect()
     # print(await start_db.select_table())
-    await dp.message.middleware(ChatActionMiddleware())
+    dp.message.middleware(ChatActionMiddleware())
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
