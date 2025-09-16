@@ -88,7 +88,7 @@ class InlineChoiceFabric(MainFabric):
 
         if last_mode == "short_description":
 
-            size_button = InlineKeyboardButton(
+            level_button = InlineKeyboardButton(
                 text="Вдумчивость",
                 callback_data=InlineChoiceTextSettings(
                     mode_for_text="level",
@@ -102,7 +102,7 @@ class InlineChoiceFabric(MainFabric):
                 ).pack()
             )
 
-            self.builder_inline.row(size_button, details_button)
+            self.builder_inline.row(level_button, details_button)
             self.builder_inline.row(self.cancel_button)
 
         else:
