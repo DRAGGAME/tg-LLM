@@ -24,7 +24,7 @@ async def edit_size_text(callback: CallbackQuery):
     await callback.answer()
 
 
-@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text in "Questions"))
+@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "Questions"))
 async def edit_question_level(callback: CallbackQuery):
     keyboard = await fabric_ml.choice_question_level(1)
 
