@@ -89,7 +89,7 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                       f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                      f"Текущий уровень углубённости: {callback_data.size_text}\n")
+                      f"Текущий уровень углубённости: {callback_data.question_level}\n")
         await callback.message.edit_text(message_text, reply_markup=keyboard)
 
         await state.update_data(question_level=callback_data.question_level)
