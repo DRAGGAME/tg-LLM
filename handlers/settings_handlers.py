@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from database.user_queries import UserQueries
-from fabric_keyboard.inline_choice_fabric import InlineChoiceSize, InlineChoiceFabric, QuestionLevelChoice, \
+from fabric_keyboard.inline_choice_fabric import InlineChoiceLevel, InlineChoiceFabric, QuestionLevelChoice, \
     InlineChoiceMode, InlineChoiceTextSettings
 
 settings_router = Router(name="settings_router")
@@ -24,7 +24,7 @@ async def edit_size_text(callback: CallbackQuery):
     await callback.answer()
 
 
-@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "Questions"))
+@settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text in "Questions"))
 async def edit_question_level(callback: CallbackQuery):
     keyboard = await fabric_ml.choice_question_level(1)
 
@@ -32,22 +32,22 @@ async def edit_question_level(callback: CallbackQuery):
     await callback.answer()
 
 
-@settings_router.callback_query(InlineChoiceSize.filter(F.question_data.in_([1, 2, 3])))
+@settings_router.callback_query(InlineChoiceLevel.filter(F.level.in_([1, 2, 3])))
 async def change_size_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
         keyboard = await fabric_ml.change_question_data(1)
         if callback_data.size_text == 1:
             keyboard = await fabric_ml.change_question_data(1)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Размер текста изменен на 1")
+            await callback.answer("Вдумчивость изменена на 1", show_alert=True)
         elif callback_data.size_text == 2:
             keyboard = await fabric_ml.change_question_data(2)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Размер текста изменен на 2")
+            await callback.answer("Вдумчивость изменена на 2", show_alert=True)
         elif callback_data.size_text == 3:
             keyboard = await fabric_ml.change_question_data(3)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Размер текста изменен на 3")
+            await callback.answer("Вдумчивость изменена на 3", show_alert=True)
 
         level_detalisation = await state.get_value("level_detalisation")
 
@@ -56,7 +56,7 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                       f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                      f"Текущий уровень углубённости детализации: {callback_data.size_text}\n")
+                      f"Текущий уровень углубённости детализации: {callback_data.level}\n")
         await callback.message.edit_text(message_text, reply_markup=keyboard)
         await state.update_data(question_data=callback_data.size_text)
     except TelegramBadRequest:
@@ -65,6 +65,8 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
 @settings_router.callback_query(QuestionLevelChoice.filter(F.question_level.in_([1, 2, 3])))
 async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
+        keyboard = await fabric_ml.choice_question_level(1)
+
         if callback_data.question_level == 1:
             keyboard = await fabric_ml.choice_question_level(1)
             await callback.message.edit_reply_markup(reply_markup=keyboard)
@@ -88,6 +90,8 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                       f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
                       f"Текущий уровень углубённости: {callback_data.size_text}\n")
+        await callback.message.edit_text(message_text, reply_markup=keyboard)
+
         await state.update_data(question_level=callback_data.question_level)
     except TelegramBadRequest:
         await callback.answer("Уровень детализации остался такой же...")

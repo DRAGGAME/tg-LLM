@@ -16,8 +16,8 @@ class InlineChoiceTextSettings(CallbackData, prefix="inline_choice_text_settings
     mode_for_text: str
 
 
-class InlineChoiceSize(CallbackData, prefix="inline_choice_size"):
-    size_text: int
+class InlineChoiceLevel(CallbackData, prefix="inline_choice_level"):
+    level: int
 
 
 class QuestionLevelChoice(CallbackData, prefix="questions_choice"):
@@ -91,7 +91,7 @@ class InlineChoiceFabric(MainFabric):
             size_button = InlineKeyboardButton(
                 text="Размер текста",
                 callback_data=InlineChoiceTextSettings(
-                    mode_for_text="size",
+                    mode_for_text="Вдумчивость",
                 ).pack()
             )
 
@@ -113,28 +113,28 @@ class InlineChoiceFabric(MainFabric):
     async def change_question_data(self, number_activity: int=1) -> InlineKeyboardMarkup:
         await self.create_builder_inline()
 
-        size_button_one = InlineKeyboardButton(
+        level_button_one = InlineKeyboardButton(
             text=f"1{'✅' if number_activity == 1 else '❌'}",
-            callback_data=InlineChoiceSize(
-                size_text=1,
+            callback_data=InlineChoiceLevel(
+                level=1,
             ).pack()
         )
 
-        size_button_two = InlineKeyboardButton(
+        level_button_two = InlineKeyboardButton(
             text=f"2{'✅' if number_activity == 2 else '❌'}",
-            callback_data=InlineChoiceSize(
-                size_text=2,
+            callback_data=InlineChoiceLevel(
+                level=2,
             ).pack()
         )
 
-        size_button_three = InlineKeyboardButton(
+        level_button_three = InlineKeyboardButton(
             text=f"3{'✅' if number_activity == 3 else '❌'}",
-            callback_data=InlineChoiceSize(
-                size_text=3,
+            callback_data=InlineChoiceLevel(
+                level=3,
             ).pack()
         )
 
-        self.builder_inline.row(size_button_one, size_button_two, size_button_three)
+        self.builder_inline.row(level_button_one, level_button_two, level_button_three)
         self.builder_inline.row(self.cancel_button)
 
         return self.builder_inline.as_markup()
