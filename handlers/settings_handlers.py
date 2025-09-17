@@ -51,7 +51,7 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
 
         level_detalisation = await state.get_value("level_detalisation")
 
-        if bool(level_detalisation) is False:
+        if level_detalisation is None:
             level_detalisation = 1
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
@@ -85,7 +85,7 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
 
         level_detalisation = await state.get_value("level_detalisation")
 
-        if bool(level_detalisation) is False:
+        if level_detalisation is None:
             level_detalisation = 1
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
