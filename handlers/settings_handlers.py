@@ -35,19 +35,9 @@ async def edit_question_level(callback: CallbackQuery):
 @settings_router.callback_query(InlineChoiceLevel.filter(F.level.in_([1, 2, 3])))
 async def change_size_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
-        keyboard = await fabric_ml.change_question_data(1)
-        if callback_data.level == 1:
-            keyboard = await fabric_ml.change_question_data(1)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Вдумчивость изменена на 1", show_alert=True)
-        elif callback_data.level == 2:
-            keyboard = await fabric_ml.change_question_data(2)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Вдумчивость изменена на 2", show_alert=True)
-        elif callback_data.level == 3:
-            keyboard = await fabric_ml.change_question_data(3)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Вдумчивость изменена на 3", show_alert=True)
+        keyboard = await fabric_ml.change_question_data(callback_data.level)
+        await callback.message.edit_reply_markup(reply_markup=keyboard)
+        await callback.answer(f"Вдумчивость изменена на {callback_data.level}", show_alert=True)
 
         level_detalisation = await state.get_value("level_detalisation")
 

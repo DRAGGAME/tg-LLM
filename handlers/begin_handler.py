@@ -37,8 +37,6 @@ async def cancel_handler(callback: CallbackQuery, state: FSMContext):
     level = await state.get_value("level")
     level_question = await state.get_value("question_level")
 
-    print(level, level_question)
-
     if not level:
         level = 1
         await state.update_data(level=level)
