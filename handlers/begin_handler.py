@@ -39,11 +39,11 @@ async def cancel_handler(callback: CallbackQuery, state: FSMContext):
 
     print(level, level_question)
 
-    if not level:
+    if level:
         level = 1
         await state.update_data(level=level)
 
-    if not level_question:
+    if level_question:
         level_question = 1
         await state.update_data(level_question=level_question)
 
