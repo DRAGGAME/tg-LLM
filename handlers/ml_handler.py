@@ -66,7 +66,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         file = await bot.get_file(file_id)
         file_path = file.file_path
 
-        level_size = await state.get_value("size_text")
+        level_size = await state.get_value("level")
         question_level = await state.get_value("question_level")
 
         if bool(level_size) is False:

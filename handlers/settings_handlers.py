@@ -39,48 +39,37 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer(f"Вдумчивость изменена на {callback_data.level}", show_alert=True)
 
-        level_detalisation = await state.get_value("level_detalisation")
+        level_detalisation = await state.get_value("question_level")
 
         if level_detalisation is None:
             level_detalisation = 1
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
-                      f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                      f"Текущий уровень детализации: {callback_data.level}\n")
+                        f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
+                        f"Текущий уровень детализации: {callback_data.level}\n")
 
         await callback.message.edit_text(message_text, reply_markup=keyboard)
         await state.update_data(level=callback_data.level)
     except TelegramBadRequest:
         await callback.answer("Уровень углублённости вопросов остался такой же...")
 
+
 @settings_router.callback_query(QuestionLevelChoice.filter(F.question_level.in_([1, 2, 3])))
 async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
-        keyboard = await fabric_ml.choice_question_level(1)
 
-        if callback_data.question_level == 1:
-            keyboard = await fabric_ml.choice_question_level(1)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Уровень детализации изменен на 1")
+        keyboard = await fabric_ml.choice_question_level(callback_data.question_level)
+        await callback.message.edit_reply_markup(reply_markup=keyboard)
+        await callback.answer(f"Уровень детализации изменен на {callback_data.question_level}")
 
-        elif callback_data.question_level == 2:
-            keyboard = await fabric_ml.choice_question_level(2)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Уровень детализации изменен на 2")
-
-        elif callback_data.question_level == 3:
-            keyboard = await fabric_ml.choice_question_level(3)
-            await callback.message.edit_reply_markup(reply_markup=keyboard)
-            await callback.answer("Уровень детализации изменен на 3")
-
-        level_detalisation = await state.get_value("level_detalisation")
+        level_detalisation = await state.get_value("level")
 
         if level_detalisation is None:
             level_detalisation = 1
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
-                      f"Текущий уровень углублённости вопросов: {callback_data.question_level}\n"
-                      f"Текущий уровень детализации: {level_detalisation}\n")
+                        f"Текущий уровень углублённости вопросов: {callback_data.question_level}\n"
+                        f"Текущий уровень детализации: {level_detalisation}\n")
 
         await callback.message.edit_text(message_text, reply_markup=keyboard)
 
