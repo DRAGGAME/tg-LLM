@@ -25,7 +25,9 @@ class QuestionLevelChoice(CallbackData, prefix="questions_choice"):
 
 
 class InlineChoiceFabric(MainFabric):
-
+    """
+    Класс с клавиатурами
+    """
     def __init__(self):
 
         self.cancel_button = InlineKeyboardButton(

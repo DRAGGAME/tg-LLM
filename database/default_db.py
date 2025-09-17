@@ -1,7 +1,9 @@
 import aiosqlite
 
 class DefaultDB:
-
+    """
+    Класс для работы с базой данных
+    """
     def __init__(self):
         """Инициализация начальных переменных"""
         self.pool = None

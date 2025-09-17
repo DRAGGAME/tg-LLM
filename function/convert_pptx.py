@@ -3,6 +3,12 @@ import asyncio
 from spire.presentation import Presentation
 
 async def convert_pptx_to_text(file_name: str) -> str:
+    """
+    Преобразование презентаций в текст
+    Работает только с текстом
+    :param file_name:
+    :return:
+    """
     presentation = Presentation()
     presentation.LoadFromFile(file_name)
     text = ""

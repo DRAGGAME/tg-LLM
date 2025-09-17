@@ -6,6 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from config import bot
 from database.user_queries import UserQueries
 from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceSettings, InlineChoiceMode
+from logger import logger
 
 begin_router = Router(name="begin_router")
 keyboard_choice = InlineChoiceFabric()
@@ -13,9 +14,9 @@ sqlite = UserQueries()
 
 
 @begin_router.message(CommandStart())
-async def start_handler(message: Message):
+async def start_handler(message: Message, state: FSMContext):
     await sqlite.connect()
-
+    logger.info(f"Пользователь с user_id({message.from_user.id}) и ником({message.from_user.username}) запустил бота")
     user_id = message.from_user.id
     username = message.from_user.username
 
@@ -23,11 +24,10 @@ async def start_handler(message: Message):
     if not data:
         await sqlite.insert_user(username, str(user_id))
 
-    # await bot.unpin_all_chat_messages(chat_id=message.chat.id)
     await sqlite.close()
+    await state.clear()
     await message.answer(f"Приветствую вас, пришлите файл и настройте")
 
-    # await bot_message.pin()
 
 
 @begin_router.callback_query(InlineChoiceMode.filter(F.mode == "cancel"))

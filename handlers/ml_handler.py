@@ -21,13 +21,19 @@ class DocumentHandler(StatesGroup):
 
 @ml_handler.message(F.document)
 async def docx_handler(message: Message, state: FSMContext):
-    await sqlbase_request.connect()
-    user_model = await sqlbase_request.get_user_model(str(message.chat.id))
-    keyboard_a_documents = await fabric_ml.choice_fabric()
-    await sqlbase_request.close()
+    """
+    Хэндлер для принятия документа
+    :param message:
+    :param state:
+    :return:
+    """
+    await state.clear()
 
     file_id = message.document.file_id
     await state.update_data(new_file_id=file_id)
+
+    keyboard_a_documents = await fabric_ml.choice_fabric()
+    logger.info(f"Пользователь с user_id({message.from_user.id}) и ником({message.from_user.username}) отправил файл")
 
     await message.answer(text="Какие параметры вы будете использовать?\n\n"
                               f"Текущий уровень углублённости вопросов: 1\n"
@@ -36,9 +42,15 @@ async def docx_handler(message: Message, state: FSMContext):
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings"))
 async def settings_handler(callback: CallbackQuery):
+    """
+    Выбор режима работы
+    :param callback:
+    :return:
+    """
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.from_user.id))
     await sqlbase_request.close()
+
     kb = await fabric_ml.choice_mode(model)
 
     await callback.message.edit_text("Выберите режим работы", reply_markup=kb)
@@ -47,6 +59,12 @@ async def settings_handler(callback: CallbackQuery):
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings_text"))
 async def settings_text_handler(callback: CallbackQuery, state: FSMContext):
+    """
+    Настройки работы
+    :param callback:
+    :param state:
+    :return:
+    """
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.from_user.id))
     await sqlbase_request.close()
@@ -67,40 +85,57 @@ async def settings_text_handler(callback: CallbackQuery, state: FSMContext):
                   f"Текущий уровень детализации: {level}")
 
     kb = await fabric_ml.choice_settings_text(model[0][0])
+
     await callback.message.edit_text(f"{message_text}", reply_markup=kb)
     await callback.answer()
 
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "run"))
-@flags.chat_action("typing")
 async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
+    """
+    Запуск обработки через ИИ файла
+    :param callback:
+    :param state:
+    :return:
+    """
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
+    await sqlbase_request.close()
     if "short_description" == model[0][0]:
+        # Краткое описание
+
 
         file_id = await state.get_value("new_file_id")
+
         file = await bot.get_file(file_id)
         file_path = file.file_path
 
-        level_size = await state.get_value("level")
+        level = await state.get_value("level")
         question_level = await state.get_value("question_level")
 
-        if bool(level_size) is False:
-            level_size = 1
+        if not bool(level):
+            level = 1
 
-        if bool(question_level) is False:
+        if not bool(question_level):
             question_level = 1
 
-
         await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
+
+        logger.info(
+            f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username}) был отправлен запрос к ИИ с данными:"
+            f"Вдумчивость: {level}\nВопрсы: {question_level}")
+
         await callback.message.delete()
         await callback.answer("Обработка файла...")
 
-        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level_size),
+        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
                                                          int(question_level))
 
         await os.remove(f"{file_path.split('/')[-1]}")
         for response in responses_list:
             await callback.message.answer(response)
-
+            logger.info(f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})"
+                        f"Отправлено сообщение")
+        logger.info("Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})\n"
+                    "Закончена отправка сообщений")
         await state.clear()

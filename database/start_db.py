@@ -2,7 +2,9 @@ from database.default_db import DefaultDB
 
 
 class StartDB(DefaultDB):
-
+    """
+    Класс во время старта
+    """
     async def start_db(self):
 
         await self.connect()

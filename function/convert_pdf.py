@@ -2,7 +2,15 @@ from spire.pdf.common import *
 from spire.pdf import *
 import re
 
-async def convert_pdf_to_text(file_name: str):
+async def convert_pdf_to_text(file_name: str) -> str:
+    """
+    Конвертирование файла-pdf в текст.
+    Предварительно убирается строка от библиотеки spire
+    Работает только с текстом
+
+    :param file_name:
+    :return:
+    """
 
     re_pattern = r"Evaluation Warning : The document was created with Spire.PDF for Python."
 

@@ -9,6 +9,7 @@ from database.start_db import StartDB
 from handlers.begin_handler import begin_router
 from handlers.ml_handler import ml_handler
 from handlers.settings_handlers import settings_router
+from logger import logger
 
 dp = Dispatcher()
 
@@ -23,9 +24,7 @@ logging.basicConfig(level=logging.DEBUG,
 async def main():
     start_db = StartDB()
     await start_db.start_db()
-    await start_db.connect()
-    # print(await start_db.select_table())
-    dp.message.middleware(ChatActionMiddleware())
+    logger.info("БАЗА ДАННЫХ ИНИЦИАЛИЗРОВАНА\nБОТ ЗАПУЩЕН")
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

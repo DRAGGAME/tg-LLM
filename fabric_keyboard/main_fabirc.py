@@ -1,7 +1,9 @@
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
 class MainFabric:
-
+    """
+    Основной класс для создания клавиатур
+    """
     def __init__(self):
         self.builder_reply = None
 

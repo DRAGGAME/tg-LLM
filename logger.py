@@ -32,4 +32,5 @@ def cleanup_old_logs():
             logger.warn(f"Удалён старый лог-файл: {oldest_file}")
         except Exception as e:
             logger.error(f"Ошибка при удалении лог-файлфа: {e}")
+
 cleanup_old_logs()

@@ -11,6 +11,12 @@ from function.convert_xml import convert_xml_to_text
 
 
 async def split_text(text, max_len=50):
+    """
+    Разбитие текста
+    :param text:
+    :param max_len:
+    :return:
+    """
     chunks = []
     start = 0
     while start < len(text):
@@ -20,9 +26,18 @@ async def split_text(text, max_len=50):
     return chunks
 
 
-async def request_short_description(file_name: str, level_size: int, level_question: int) -> list:
+async def request_short_description(file_name: str, level: int, level_question: int) -> list:
+    """
+    Работа с ИИ
+    Отправляется запрос на получение текста
+    Отправление текста к ИИ
+    :param file_name:
+    :param level:
+    :param level_question:
+    :return:
+    """
     client = Client()
-    text = f"Уровни глубины,: {level_size}\nУглублённость вопросов: {level_question}\nТекст: "
+    text = f"Уровни глубины,: {level}\nУглублённость вопросов: {level_question}\nТекст: "
     summaries = []
 
     _, file_extension = os.path.splitext(file_name)
@@ -157,7 +172,9 @@ async def request_short_description(file_name: str, level_size: int, level_quest
                 )
 
                 response = ''.join([str(chunk) for chunk in response_generator])
+
                 match = re.search(r"content='(.*?)'", response)
+
                 if match:
                     if match.group(1) == "" or match.group(1) == " " or match.group(1) == "error code: 502":
                         continue
@@ -170,7 +187,6 @@ async def request_short_description(file_name: str, level_size: int, level_quest
                 print(f"Неизвестная ошибка: {e}")
                 await asyncio.sleep(10)
 
-    # for chunk in chunks:
     summary = await process_chunk(text)
     if summary:
         summaries.append(summary)

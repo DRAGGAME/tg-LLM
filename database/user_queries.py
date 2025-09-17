@@ -2,7 +2,9 @@ from database.default_db import DefaultDB
 
 
 class UserQueries(DefaultDB):
-
+    """
+    Запросы, использующаися постоянно
+    """
     async def insert_user(self, username: str, user_id: str):
         await self.execute_query("""INSERT INTO users (username, user_id) VALUES ($1, $2)""", (username, user_id))
 
