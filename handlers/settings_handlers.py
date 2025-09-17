@@ -59,7 +59,7 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
                       f"Текущий уровень детализации: {callback_data.level}\n")
 
         await callback.message.edit_text(message_text, reply_markup=keyboard)
-        await state.update_data(level_detalisation=callback_data.level)
+        await state.update_data(level=callback_data.level)
     except TelegramBadRequest:
         await callback.answer("Уровень углублённости вопросов остался такой же...")
 

@@ -35,17 +35,17 @@ async def cancel_handler(callback: CallbackQuery, state: FSMContext):
     kb = await keyboard_choice.choice_fabric()
 
     level = await state.get_value("level")
-    level_question = await state.get_value("level_question")
+    level_question = await state.get_value("question_level")
 
     print(level, level_question)
 
-    if level:
+    if not level:
         level = 1
         await state.update_data(level=level)
 
-    if level_question:
+    if not level_question:
         level_question = 1
-        await state.update_data(level_question=level_question)
+        await state.update_data(question_level=level_question)
 
     message_text = ("Какие параметры вы будете использовать?\n\n"
                   f"Текущий уровень углублённости вопросов: {level_question}\n"
