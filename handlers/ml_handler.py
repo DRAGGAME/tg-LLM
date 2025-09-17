@@ -46,12 +46,28 @@ async def settings_handler(callback: CallbackQuery):
 
 
 @ml_handler.callback_query(InlineChoiceSettings.filter(F.setting_action == "settings_text"))
-async def settings_text_handler(callback: CallbackQuery):
+async def settings_text_handler(callback: CallbackQuery, state: FSMContext):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.from_user.id))
     await sqlbase_request.close()
+
+    level = await state.get_value("level")
+    level_question = await state.get_value("question_level")
+
+    if not level:
+        level = 1
+        await state.update_data(level=level)
+
+    if not level_question:
+        level_question = 1
+        await state.update_data(question_level=level_question)
+
+    message_text = ("Какие параметры вы будете использовать?\n\n"
+                  f"Текущий уровень углублённости вопросов: {level_question}\n"
+                  f"Текущий уровень детализации: {level}")
+
     kb = await fabric_ml.choice_settings_text(model[0][0])
-    await callback.message.edit_text("Выберите, что вы хотите настроить", reply_markup=kb)
+    await callback.message.edit_text(f"{message_text}", reply_markup=kb)
     await callback.answer()
 
 

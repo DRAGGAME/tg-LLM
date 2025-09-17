@@ -14,10 +14,7 @@ sqlbase_request = UserQueries()
 
 
 @settings_router.callback_query(InlineChoiceTextSettings.filter(F.mode_for_text == "level"))
-async def edit_size_text(callback: CallbackQuery):
-    await sqlbase_request.connect()
-    last_mode = await sqlbase_request.get_user_model(str(callback.from_user.id))
-    await sqlbase_request.close()
+async def edit_level_text(callback: CallbackQuery):
     keyboard = await fabric_ml.change_question_data(1)
 
     await callback.message.edit_reply_markup(reply_markup=keyboard)
@@ -33,7 +30,7 @@ async def edit_question_level(callback: CallbackQuery):
 
 
 @settings_router.callback_query(InlineChoiceLevel.filter(F.level.in_([1, 2, 3])))
-async def change_size_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
+async def change_level_text(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
         keyboard = await fabric_ml.change_question_data(callback_data.level)
         await callback.message.edit_reply_markup(reply_markup=keyboard)
