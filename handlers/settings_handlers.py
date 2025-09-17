@@ -46,18 +46,17 @@ async def change_size_text(callback: CallbackQuery, callback_data: CallbackData,
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                         f"Текущий уровень углублённости вопросов: {level_detalisation}\n"
-                        f"Текущий уровень детализации: {callback_data.level}\n")
+                        f"Текущий уровень вдумчивости: {callback_data.level}\n")
 
         await callback.message.edit_text(message_text, reply_markup=keyboard)
         await state.update_data(level=callback_data.level)
     except TelegramBadRequest:
-        await callback.answer("Уровень углублённости вопросов остался такой же...")
+        await callback.answer("Уровень вдумчивости остался такой же...")
 
 
 @settings_router.callback_query(QuestionLevelChoice.filter(F.question_level.in_([1, 2, 3])))
 async def change_level_detalisation(callback: CallbackQuery, callback_data: CallbackData, state: FSMContext):
     try:
-
         keyboard = await fabric_ml.choice_question_level(callback_data.question_level)
         await callback.message.edit_reply_markup(reply_markup=keyboard)
         await callback.answer(f"Уровень детализации изменен на {callback_data.question_level}")
@@ -69,10 +68,25 @@ async def change_level_detalisation(callback: CallbackQuery, callback_data: Call
 
         message_text = (f"Какие параметры вы будете использовать?\n\n"
                         f"Текущий уровень углублённости вопросов: {callback_data.question_level}\n"
-                        f"Текущий уровень детализации: {level_detalisation}\n")
+                        f"Текущий уровень вдумчивости: {level_detalisation}\n")
 
         await callback.message.edit_text(message_text, reply_markup=keyboard)
 
         await state.update_data(question_level=callback_data.question_level)
     except TelegramBadRequest:
-        await callback.answer("Уровень детализации остался такой же...")
+        await callback.answer("Уровень углублённости вопросов остался такой же...")
+
+@settings_router.callback_query(InlineChoiceMode.filter(F.mode))
+async def answer_short_description(callback: CallbackQuery, state: FSMContext, callback_data: CallbackData):
+    await sqlbase_request.connect()
+    model = await sqlbase_request.get_user_model(str(callback.from_user.id))
+
+    if callback_data.mode in model[0][0]:
+        await callback.answer("Режим уже активирован")
+
+    else:
+        await sqlbase_request.update_model(str(callback.from_user.id), callback_data.mode)
+
+    await sqlbase_request.close()
+
+
