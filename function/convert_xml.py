@@ -15,7 +15,6 @@ async def convert_xml_to_text(file_name: str) -> str:
             try:
                 df = pd.read_csv(file_name, sep=None, engine="python", encoding=enc)
                 if not df.empty:
-                    # Конвертируем в текст
                     text = df.to_string(index=False)
                     return text
             except Exception as e:
