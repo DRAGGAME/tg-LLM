@@ -1,12 +1,9 @@
 import pandas as pd
+import re
 from logger import logger
 
 
 async def convert_xml_to_text(file_name: str) -> str:
-    """
-    Конвертация CSV в чистый текст (строку).
-    Автоматически определяет разделитель и кодировку.
-    """
     try:
         encodings_to_try = ["utf-8-sig", "utf-8", "cp1251", "latin1"]
         last_error = None
@@ -16,6 +13,7 @@ async def convert_xml_to_text(file_name: str) -> str:
                 df = pd.read_csv(file_name, sep=None, engine="python", encoding=enc)
                 if not df.empty:
                     text = df.to_string(index=False)
+                    text = re.sub(r"[\u202f\u00a0]", " ", text)
                     return text
             except Exception as e:
                 last_error = e
