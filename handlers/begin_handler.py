@@ -53,6 +53,6 @@ async def cancel_handler(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     
 
-@begin_router.callback_query(Command(commands==['Help', 'help']))
+@begin_router.message(Command(commands=['Help', 'help']))
 async def help_handler(message: Message):
     await message.reply("Отправте файл боту и он сделает его краткое описание, и напишет вопросы к нему!\n\nВНИМАНИЕ!\nБОТ РАБОТАЕТ ТОЛЬКО С ФАЙЛАМИ, У КОТОРЫХ ИМЕЕТСЯ ТЕКСТ ВНУТРИ.\nМожно отправить файл в виде таблицы")
