@@ -1,21 +1,27 @@
 import os
-
 import pandas as pd
 from pandas import DataFrame
+import pyexcel_ods3  # Необходимо установить библиотеку pip install pyexcel-ods3
 
 
-async def convert_xml_to_text(file_name: str) -> DataFrame:
+def convert_file_to_dataframe(file_name: str) -> DataFrame:
     """
-    Конвертирование таблиц в текст
-    :param file_name:
+    Конвертирует файл XML, XLSX, ODS или CSV в объект Pandas DataFrame
+
+    :param file_name: Имя файла (например, 'data.csv' или 'report.xlsx')
     :return:
     """
-    text = ""
     _, file_extension = os.path.splitext(file_name)
 
-    if file_extension in [".xml", ".xlsx", ".xlsm", ".ods"]:
-        text = pd.read_xml(file_name)
-    elif file_extension in [".csv"]:
-        text = pd.read_csv(file_name)
+    if file_extension.lower() in ['.xml', '.xlsx']:
+        df = pd.read_excel(file_name)
+    elif file_extension.lower() == '.csv':
+        df = pd.read_csv(file_name, encoding='utf-8')
+    elif file_extension.lower() == '.ods':
+        data = pyexcel_ods3.get_data(file_name)
+        sheet_name = list(data.keys())[0]
+        df = pd.DataFrame(data[sheet_name])
+    else:
+        raise ValueError(f"Файл '{file_name}' имеет неподдерживаемое расширение.")
 
-    return text
+    return df

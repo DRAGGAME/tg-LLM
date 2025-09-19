@@ -137,9 +137,8 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
-
     await sqlbase_request.close()
-    print(model)
+
     if model:
 
         if "short_description" == model[0][0]:
@@ -148,8 +147,8 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         await sqlbase_request.connect()
         logger.info(
             f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
-        user_id = callback.message.from_user.id
-        username = callback.message.from_user.username
+        user_id = callback.from_user.id
+        username = callback.from_user.username
 
         await sqlbase_request.insert_user(username, str(user_id))
 
