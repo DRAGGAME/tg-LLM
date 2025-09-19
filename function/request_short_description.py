@@ -50,7 +50,7 @@ async def request_short_description(file_name: str, level: int, level_question: 
         text += await convert_pptx_to_text(file_name)
 
     else:
-        print("Поддерживаемые форматы файлов: .docx и .pdf")
+
         return []
 
     async def process_chunk(text):
