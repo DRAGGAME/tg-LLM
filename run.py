@@ -24,7 +24,6 @@ logging.basicConfig(level=logging.DEBUG,
 async def main():
     start_db = StartDB()
     await start_db.start_db()
-    await s
     logger.info("БАЗА ДАННЫХ ИНИЦИАЛИЗРОВАНА\nБОТ ЗАПУЩЕН")
     await dp.start_polling(bot)
 
