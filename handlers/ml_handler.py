@@ -104,7 +104,8 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.close()
 
-    if model is None:
+    if bool(model) is False:
+
         await sqlbase_request.connect()
         logger.info(
             f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
