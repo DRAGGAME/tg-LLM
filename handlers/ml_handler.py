@@ -100,6 +100,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     """
 
     for _ in range(0, 2):
+        print("Пробуем")
         try:
             await sqlbase_request.connect()
             model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
