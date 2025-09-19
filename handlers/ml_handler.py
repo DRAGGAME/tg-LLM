@@ -103,7 +103,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
 
     await sqlbase_request.close()
-
+    print(model)
     if bool(model) is False:
 
         await sqlbase_request.connect()
