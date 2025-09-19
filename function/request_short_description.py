@@ -153,9 +153,15 @@ async def request_short_description(file_name: str, level: int, level_question: 
                     - Цитаты из текста (если есть)
                     - Чёткие выводы
                     - Контрольные вопросы и ответы
-                    - Без HTML/Markdown-разметки
-
-                Избегай шаблонных фраз. Стиль — аналитический, без лишних украшений.
+                    - Стиль — аналитический, без лишних украшений
+                    - Только слова
+                    
+                - Избегай:
+                    - HTML/Markdown-разметки
+                    - Избегай шаблонных фраз.
+                    - Unicode разметки и т.д
+                    - Unicode символы
+                    - Без эмодзи и т.д
                 """
 
                 response_generator = client.chat.completions.create(

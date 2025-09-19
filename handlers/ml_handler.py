@@ -44,7 +44,6 @@ async def ai_test(callback: CallbackQuery, state: FSMContext):
 
     responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
                                                      int(question_level))
-    print(responses_list)
     if not responses_list:
         await callback.message.answer("Тип файла - не поддерживается")
 
