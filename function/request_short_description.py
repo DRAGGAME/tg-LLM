@@ -155,12 +155,13 @@ async def request_short_description(file_name: str, level: int, level_question: 
                     - Контрольные вопросы и ответы
                     - Стиль — аналитический, без лишних украшений
                     - Только слова
+                    - Анализ текста
                     
                 - Избегай:
                     - HTML/Markdown-разметки
                     - Избегай шаблонных фраз.
                     - Unicode разметки и т.д
-                    - Unicode символы
+                    - Unicode символы по типу "\u202f"
                     - Без эмодзи и т.д
                 """
 
