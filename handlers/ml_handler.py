@@ -18,6 +18,42 @@ fabric_ml = InlineChoiceFabric()
 class DocumentHandler(StatesGroup):
     document_setting = State()
 
+async def ai_test(callback: CallbackQuery, state: FSMContext):
+    file_id = await state.get_value("new_file_id")
+
+    file = await bot.get_file(file_id)
+    file_path = file.file_path
+
+    level = await state.get_value("level")
+    question_level = await state.get_value("question_level")
+
+    if not bool(level):
+        level = 1
+
+    if not bool(question_level):
+        question_level = 1
+
+    await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
+
+    logger.info(
+        f"Пользователь с user_id({callback.message.from_user.id}) ) был отправлен запрос к ИИ с данными:"
+        f"Вдумчивость: {level}\nВопрсы: {question_level}")
+
+    await callback.message.delete()
+    await callback.answer("Обработка файла...")
+
+    responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
+                                                     int(question_level))
+
+    await os.remove(f"{file_path.split('/')[-1]}")
+    for response in responses_list:
+        await callback.message.answer(response)
+        logger.info(f"Пользователь с user_id({callback.message.from_user.id}) )"
+                    f"Отправлено сообщение")
+    logger.info(f"Пользователь с user_id({callback.message.from_user.id}))\n"
+                f"Закончена отправка сообщений")
+    await state.clear()
+
 
 @ml_handler.message(F.document)
 async def docx_handler(message: Message, state: FSMContext):
@@ -104,8 +140,11 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
     await sqlbase_request.close()
     print(model)
-    if bool(model) is False:
+    if model:
 
+        if "short_description" == model[0][0]:
+            await ai_test(callback, state)
+    else:
         await sqlbase_request.connect()
         logger.info(
             f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
@@ -118,40 +157,6 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
 
         await sqlbase_request.close()
 
-    if "short_description" == model[0][0]:
-        file_id = await state.get_value("new_file_id")
-
-        file = await bot.get_file(file_id)
-        file_path = file.file_path
-
-        level = await state.get_value("level")
-        question_level = await state.get_value("question_level")
-
-        if not bool(level):
-            level = 1
-
-        if not bool(question_level):
-            question_level = 1
-
-        await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
-
-        logger.info(
-            f"Пользователь с user_id({callback.message.from_user.id}) ) был отправлен запрос к ИИ с данными:"
-            f"Вдумчивость: {level}\nВопрсы: {question_level}")
-
-        await callback.message.delete()
-        await callback.answer("Обработка файла...")
-
-        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
-                                                         int(question_level))
-
-        await os.remove(f"{file_path.split('/')[-1]}")
-        for response in responses_list:
-            await callback.message.answer(response)
-            logger.info(f"Пользователь с user_id({callback.message.from_user.id}) )"
-                        f"Отправлено сообщение")
-        logger.info(f"Пользователь с user_id({callback.message.from_user.id}))\n"
-                    f"Закончена отправка сообщений")
-        await state.clear()
-
+        if "short_description" == model[0][0]:
+            await ai_test(callback, state)
 
