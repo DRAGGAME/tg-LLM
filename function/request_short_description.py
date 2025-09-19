@@ -7,7 +7,6 @@ import os
 from function.convert_docx import convert_docx_to_text
 from function.convert_pdf import convert_pdf_to_text
 from function.convert_pptx import convert_pptx_to_text
-from function.convert_xml import convert_xml_to_text
 
 
 async def split_text(text, max_len=50):
@@ -46,9 +45,6 @@ async def request_short_description(file_name: str, level: int, level_question: 
 
     elif file_extension.lower() in [".pdf"]:
         text += await convert_pdf_to_text(file_name)
-
-    elif file_extension.lower() in [".xls", ".xlsx", ".xlsm", ".ods", ".csv"]:
-        text += await convert_xml_to_text(file_name)
 
     elif file_extension.lower() in ["pptx", "ppt", "odp"]:
         text += await convert_pptx_to_text(file_name)
