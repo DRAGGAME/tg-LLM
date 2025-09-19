@@ -98,15 +98,14 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     :param state:
     :return:
     """
-    await sqlbase_request.connect()
-    model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
-    await sqlbase_request.close()
+
     for _ in range(0, 2):
         try:
+            await sqlbase_request.connect()
+            model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
+            await sqlbase_request.close()
             if "short_description" == model[0][0]:
                 # Краткое описание
-
-
                 file_id = await state.get_value("new_file_id")
 
                 file = await bot.get_file(file_id)
@@ -154,4 +153,5 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
                 await sqlbase_request.insert_user(username, str(user_id))
 
             await sqlbase_request.close()
+
             continue
