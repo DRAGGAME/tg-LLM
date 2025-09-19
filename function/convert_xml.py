@@ -1,3 +1,5 @@
+import asyncio
+
 import pandas as pd
 from pandas import DataFrame
 
@@ -9,5 +11,6 @@ async def convert_xml_to_text(file_name: str) -> DataFrame:
     :return:
     """
     text = pd.read_csv(file_name)
-
     return text
+    return text
+
