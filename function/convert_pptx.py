@@ -2,7 +2,7 @@ import asyncio
 
 from spire.presentation import Presentation
 
-async def convert_pptx_to_text(file_name: str) -> str:
+async def convert_pptx_to_text(file_name: str, text="") -> str:
     """
     Преобразование презентаций в текст
     Работает только с текстом
@@ -11,7 +11,6 @@ async def convert_pptx_to_text(file_name: str) -> str:
     """
     presentation = Presentation()
     presentation.LoadFromFile(file_name)
-    text = ""
     for slide in presentation.Slides:
         if slide.GetAllTextFrame() is not None:
             for text_slide in slide.GetAllTextFrame():
@@ -23,3 +22,5 @@ async def convert_pptx_to_text(file_name: str) -> str:
                 text += f"Слайд: {slide.SlideNumber} - {text_slide}\n"
     print(text)
     return text
+
+# asyncio.run(convert_pptx_to_text("Йосемитский водопад.pptx"))
