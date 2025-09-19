@@ -99,7 +99,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     :return:
     """
 
-    for _ in range(0, 2):
+    for _ in range(0, 3):
         print("Пробуем")
         try:
             await sqlbase_request.connect()
