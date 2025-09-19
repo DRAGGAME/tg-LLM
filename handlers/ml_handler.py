@@ -99,62 +99,58 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     :return:
     """
 
-    for _ in range(0, 3):
-        print("Пробуем")
-        try:
-            await sqlbase_request.connect()
-            model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
-            await sqlbase_request.close()
-            if "short_description" == model[0][0]:
-                print("yes")
-                # Краткое описание
-                file_id = await state.get_value("new_file_id")
+    await sqlbase_request.connect()
+    model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
 
-                file = await bot.get_file(file_id)
-                file_path = file.file_path
+    await sqlbase_request.close()
 
-                level = await state.get_value("level")
-                question_level = await state.get_value("question_level")
+    if model[0][0] is None:
+        await sqlbase_request.connect()
+        logger.info(
+            f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
+        user_id = callback.message.from_user.id
+        username = callback.message.from_user.username
 
-                if not bool(level):
-                    level = 1
+        await sqlbase_request.insert_user(username, str(user_id))
 
-                if not bool(question_level):
-                    question_level = 1
+        model = await sqlbase_request.get_user_model(str(user_id))
 
-                await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
+        await sqlbase_request.close()
 
-                logger.info(
-                    f"Пользователь с user_id({callback.message.from_user.id}) ) был отправлен запрос к ИИ с данными:"
-                    f"Вдумчивость: {level}\nВопрсы: {question_level}")
+    if "short_description" == model[0][0]:
+        file_id = await state.get_value("new_file_id")
 
-                await callback.message.delete()
-                await callback.answer("Обработка файла...")
+        file = await bot.get_file(file_id)
+        file_path = file.file_path
 
-                responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
-                                                                 int(question_level))
+        level = await state.get_value("level")
+        question_level = await state.get_value("question_level")
 
-                await os.remove(f"{file_path.split('/')[-1]}")
-                for response in responses_list:
-                    await callback.message.answer(response)
-                    logger.info(f"Пользователь с user_id({callback.message.from_user.id}) )"
-                                f"Отправлено сообщение")
-                logger.info(f"Пользователь с user_id({callback.message.from_user.id}))\n"
-                            f"Закончена отправка сообщений")
-                await state.clear()
-                break
-        except IndexError:
-            await sqlbase_request.connect()
-            print("test")
-            logger.info(
-                f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
-            user_id = callback.message.from_user.id
-            username = callback.message.from_user.username
+        if not bool(level):
+            level = 1
 
-            data = await sqlbase_request.get_user_model(str(user_id))
-            if not data:
-                await sqlbase_request.insert_user(username, str(user_id))
+        if not bool(question_level):
+            question_level = 1
 
-            await sqlbase_request.close()
+        await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
 
-            continue
+        logger.info(
+            f"Пользователь с user_id({callback.message.from_user.id}) ) был отправлен запрос к ИИ с данными:"
+            f"Вдумчивость: {level}\nВопрсы: {question_level}")
+
+        await callback.message.delete()
+        await callback.answer("Обработка файла...")
+
+        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
+                                                         int(question_level))
+
+        await os.remove(f"{file_path.split('/')[-1]}")
+        for response in responses_list:
+            await callback.message.answer(response)
+            logger.info(f"Пользователь с user_id({callback.message.from_user.id}) )"
+                        f"Отправлено сообщение")
+        logger.info(f"Пользователь с user_id({callback.message.from_user.id}))\n"
+                    f"Закончена отправка сообщений")
+        await state.clear()
+
+
