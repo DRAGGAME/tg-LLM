@@ -136,6 +136,6 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
             await callback.message.answer(response)
             logger.info(f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})"
                         f"Отправлено сообщение")
-        logger.info("Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})\n"
-                    "Закончена отправка сообщений")
+        logger.info(f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})\n"
+                    f"Закончена отправка сообщений")
         await state.clear()

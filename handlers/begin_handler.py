@@ -7,7 +7,7 @@ from config import bot
 from database.user_queries import UserQueries
 from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceSettings, InlineChoiceMode
 from logger import logger
-
+from aiogram.filters import Command
 begin_router = Router(name="begin_router")
 keyboard_choice = InlineChoiceFabric()
 sqlite = UserQueries()
@@ -51,3 +51,8 @@ async def cancel_handler(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.edit_text(f"{message_text}", reply_markup=kb)
     await callback.answer()
+    
+
+@begin_router.message(Command(commands=['Help', 'help']))
+async def help_handler(message: Message):
+    await message.reply("Отправте файл боту и он сделает его краткое описание, и напишет вопросы к нему!\n\nВНИМАНИЕ!\nБОТ РАБОТАЕТ ТОЛЬКО С ФАЙЛАМИ, У КОТОРЫХ ИМЕЕТСЯ ТЕКСТ ВНУТРИ.\nМожно отправить файл в виде таблицы")
