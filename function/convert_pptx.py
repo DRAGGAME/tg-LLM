@@ -21,4 +21,5 @@ async def convert_pptx_to_text(file_name: str) -> str:
                     text_slide = "Нет"
 
                 text += f"Слайд: {slide.SlideNumber} - {text_slide}\n"
+    print(text)
     return text
