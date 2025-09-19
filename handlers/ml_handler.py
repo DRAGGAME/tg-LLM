@@ -105,6 +105,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
             model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
             await sqlbase_request.close()
             if "short_description" == model[0][0]:
+                print("yes")
                 # Краткое описание
                 file_id = await state.get_value("new_file_id")
 
@@ -143,6 +144,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
                 break
         except IndexError:
             await sqlbase_request.connect()
+            print("test")
             logger.info(
                 f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
             user_id = callback.message.from_user.id
