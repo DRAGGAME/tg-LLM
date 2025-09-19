@@ -101,41 +101,57 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     await sqlbase_request.connect()
     model = await sqlbase_request.get_user_model(str(callback.message.chat.id))
     await sqlbase_request.close()
-    if "short_description" == model[0][0]:
-        # Краткое описание
+    for _ in range(0, 2):
+        try:
+            if "short_description" == model[0][0]:
+                # Краткое описание
 
 
-        file_id = await state.get_value("new_file_id")
+                file_id = await state.get_value("new_file_id")
 
-        file = await bot.get_file(file_id)
-        file_path = file.file_path
+                file = await bot.get_file(file_id)
+                file_path = file.file_path
 
-        level = await state.get_value("level")
-        question_level = await state.get_value("question_level")
+                level = await state.get_value("level")
+                question_level = await state.get_value("question_level")
 
-        if not bool(level):
-            level = 1
+                if not bool(level):
+                    level = 1
 
-        if not bool(question_level):
-            question_level = 1
+                if not bool(question_level):
+                    question_level = 1
 
-        await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
+                await bot.download_file(file_path, f"{file_path.split('/')[-1]}")
 
-        logger.info(
-            f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username}) был отправлен запрос к ИИ с данными:"
-            f"Вдумчивость: {level}\nВопрсы: {question_level}")
+                logger.info(
+                    f"Пользователь с user_id({callback.message.from_user.id}) ) был отправлен запрос к ИИ с данными:"
+                    f"Вдумчивость: {level}\nВопрсы: {question_level}")
 
-        await callback.message.delete()
-        await callback.answer("Обработка файла...")
+                await callback.message.delete()
+                await callback.answer("Обработка файла...")
 
-        responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
-                                                         int(question_level))
+                responses_list = await request_short_description(f"{file_path.split('/')[-1]}", int(level),
+                                                                 int(question_level))
 
-        await os.remove(f"{file_path.split('/')[-1]}")
-        for response in responses_list:
-            await callback.message.answer(response)
-            logger.info(f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})"
-                        f"Отправлено сообщение")
-        logger.info(f"Пользователь с user_id({callback.message.from_user.id}) и ником({callback.message.from_user.username})\n"
-                    f"Закончена отправка сообщений")
-        await state.clear()
+                await os.remove(f"{file_path.split('/')[-1]}")
+                for response in responses_list:
+                    await callback.message.answer(response)
+                    logger.info(f"Пользователь с user_id({callback.message.from_user.id}) )"
+                                f"Отправлено сообщение")
+                logger.info(f"Пользователь с user_id({callback.message.from_user.id}))\n"
+                            f"Закончена отправка сообщений")
+                await state.clear()
+                break
+        except IndexError:
+            await sqlbase_request.connect()
+            logger.info(
+                f"Пользователь с user_id({callback.message.from_user.id}) ) обновил и запустил бота")
+            user_id = callback.message.from_user.id
+            username = callback.message.from_user.username
+
+            data = await sqlbase_request.get_user_model(str(user_id))
+            if not data:
+                await sqlbase_request.insert_user(username, str(user_id))
+
+            await sqlbase_request.close()
+            continue

@@ -16,7 +16,7 @@ sqlite = UserQueries()
 @begin_router.message(CommandStart())
 async def start_handler(message: Message, state: FSMContext):
     await sqlite.connect()
-    logger.info(f"Пользователь с user_id({message.from_user.id}) и ником({message.from_user.username}) запустил бота")
+    logger.info(f"Пользователь с user_id({message.from_user.id})  ) запустил бота")
     user_id = message.from_user.id
     username = message.from_user.username
 
