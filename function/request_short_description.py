@@ -46,7 +46,7 @@ async def request_short_description(file_name: str, level: int, level_question: 
     elif file_extension.lower() in [".pdf"]:
         text += await convert_pdf_to_text(file_name)
 
-    elif file_extension.lower() in ["pptx", "ppt", "odp"]:
+    elif file_extension.lower() in [".pptx", ".ppt", ".odp"]:
         text += await convert_pptx_to_text(file_name)
 
     else:
