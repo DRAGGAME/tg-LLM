@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 
 from config import bot
 from database.user_queries import UserQueries
-from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceSettings, InlineChoiceMode
+from fabric_keyboard.inline_choice_fabric import InlineChoiceFabric, InlineChoiceMode
 from logger import logger
 from aiogram.filters import Command
 begin_router = Router(name="begin_router")

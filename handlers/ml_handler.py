@@ -15,10 +15,7 @@ sqlbase_request = UserQueries()
 fabric_ml = InlineChoiceFabric()
 
 
-class DocumentHandler(StatesGroup):
-    document_setting = State()
-
-async def ai_test(callback: CallbackQuery, state: FSMContext):
+async def ai_send_and_answer(callback: CallbackQuery, state: FSMContext):
     file_id = await state.get_value("new_file_id")
 
     file = await bot.get_file(file_id)
@@ -144,7 +141,7 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
     if model:
 
         if "short_description" == model[0][0]:
-            await ai_test(callback, state)
+            await ai_send_and_answer(callback, state)
     else:
         await sqlbase_request.connect()
         logger.info(
@@ -159,5 +156,5 @@ async def docx_handler_run(callback: CallbackQuery, state: FSMContext):
         await sqlbase_request.close()
 
         if "short_description" == model[0][0]:
-            await ai_test(callback, state)
+            await ai_send_and_answer(callback, state)
 
